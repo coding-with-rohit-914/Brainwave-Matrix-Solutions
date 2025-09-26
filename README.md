@@ -6,9 +6,7 @@ Domain: Web Development Intern
 
 A brief, one-line description of your project.
 
-Live Demo: 1.🔗 
-           2.🔗 
-           3.🔗 
+Live Demo: 🔗 https://coding-with-rohit-914.github.io/Brainwave-Matrix-Solutions/
 Source Code: 🔗 https://github.com/coding-with-rohit-914/Brainwave-Matrix-Solutions
 
 =============================================================================================================================================================================
