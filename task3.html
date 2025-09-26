@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainwave Day Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .date-display {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .planner-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 0;
+        }
+
+        .time-slots {
+            padding: 20px;
+        }
+
+        .time-slot {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .time-slot:hover {
+            background: #f8f9fa;
+        }
+
+        .time-label {
+            width: 100px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .task-input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+
+        .task-input::placeholder {
+            color: #999;
+        }
+
+        .completed .task-input {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+
+        .complete-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+
+        .complete-btn:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 1px solid #eee;
+        }
+
+        .add-task-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        @media (max-width: 768px) {
+            .planner-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Brainwave Day Planner</h1>
+            <div class="date-display" id="currentDate"></div>
+        </header>
+
+        <div class="planner-content">
+            <div class="time-slots" id="timeSlots"></div>
+
+            <div class="sidebar">
+                <div class="add-task-form">
+                    <h3>Add New Task</h3>
+                    <div class="form-group">
+                        <label for="taskTime">Time</label>
+                        <select id="taskTime">
+                            <option value="08:00">8:00 AM</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskText">Task Description</label>
+                        <input type="text" id="taskText" placeholder="Enter your task...">
+                    </div>
+                    <button class="add-btn" onclick="addTask()">Add Task</button>
+                </div>
+
+                <div class="stats">
+                    <h3>Today's Progress</h3>
+                    <div class="stat-item">
+                        <span>Total Tasks:</span>
+                        <span class="stat-value" id="totalTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Completed:</span>
+                        <span class="stat-value" id="completedTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Remaining:</span>
+                        <span class="stat-value" id="remainingTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Completion:</span>
+                        <span class="stat-value" id="completionRate">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('dayPlannerTasks')) || {};
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            timeSlotsContainer.innerHTML = '';
+            
+            const timeSlots = [
+                '08:00', '09:00', '10:00', '11:00', '12:00', 
+                '13:00', '14:00', '15:00', '16:00', '17:00', 
+                '18:00', '19:00', '20:00'
+            ];
+
+            timeSlots.forEach(time => {
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.innerHTML = `
+                    <div class="time-label">${formatTime(time)}</div>
+                    <input type="text" class="task-input" 
+                           value="${tasks[time] ? tasks[time].text : ''}" 
+                           placeholder="No task scheduled..."
+                           onchange="updateTask('${time}', this.value)">
+                    <div class="controls">
+                        <button class="complete-btn" onclick="toggleComplete('${time}')">✓</button>
+                        <button class="delete-btn" onclick="deleteTask('${time}')">✕</button>
+                    </div>
+                `;
+                
+                if (tasks[time] && tasks[time].completed) {
+                    timeSlot.classList.add('completed');
+                }
+                
+                timeSlotsContainer.appendChild(timeSlot);
+            });
+            
+            updateStats();
+        }
+
+        function formatTime(time) {
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        function addTask() {
+            const time = document.getElementById('taskTime').value;
+            const text = document.getElementById('taskText').value.trim();
+            
+            if (!text) {
+                alert('Please enter a task description');
+                return;
+            }
+            
+            tasks[time] = { text, completed: false };
+            saveTasks();
+            generateTimeSlots();
+            document.getElementById('taskText').value = '';
+        }
+
+        function updateTask(time, text) {
+            if (text.trim()) {
+                if (!tasks[time]) {
+                    tasks[time] = { completed: false };
+                }
+                tasks[time].text = text.trim();
+            } else {
+                delete tasks[time];
+            }
+            saveTasks();
+            updateStats();
+        }
+
+        function toggleComplete(time) {
+            if (tasks[time]) {
+                tasks[time].completed = !tasks[time].completed;
+                saveTasks();
+                generateTimeSlots();
+            }
+        }
+
+        function deleteTask(time) {
+            if (tasks[time]) {
+                delete tasks[time];
+                saveTasks();
+                generateTimeSlots();
+            }
+        }
+
+        function updateStats() {
+            const taskEntries = Object.entries(tasks);
+            const total = taskEntries.length;
+            const completed = taskEntries.filter(([_, task]) => task.completed).length;
+            const remaining = total - completed;
+            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('remainingTasks').textContent = remaining;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+        }
+
+        function saveTasks() {
+            localStorage.setItem('dayPlannerTasks', JSON.stringify(tasks));
+        }
+
+        document.getElementById('taskText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        updateDateTime();
+        generateTimeSlots();
+
+        setInterval(updateDateTime, 60000);
+    </script>
+</body>
+</html>
